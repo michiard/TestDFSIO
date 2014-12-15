@@ -13,9 +13,6 @@ object TestDFSIO {
   def profile[R](code: => R, t: Long = _time) = (code, _time - t)
 
   def main(args: Array[String]) {
-    // This is the output file for statistics
-    val statFile = new BufferedWriter(new FileWriter("TestDFSIO.stat"))
-
     // Create a new Context
     val sc = new SparkContext(new SparkConf().setAppName("Spark DFSIO"))
 
@@ -26,6 +23,10 @@ object TestDFSIO {
     // Get number of files and individual size
     val nFiles = args(1).toInt
     val fSize  = args(2).toInt
+
+    // This is the output file for statistics
+    val statFile = new BufferedWriter(new FileWriter("TestDFSIO_"+ mode +".stat"))
+
 
     if (mode == "write") {
 
