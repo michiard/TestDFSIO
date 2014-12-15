@@ -49,14 +49,13 @@ object TestDFSIO {
 
     // Load file(s)
     val b = sc.objectFile[Long](ioFile)
-    val (c, timeR) = b.map(x => x+1).max
+    val (c, timeR) = profile {b.map(x => x+1).max}
 
     // Write stats
     statFile.write("\n\nTime for read : " + timeR/1000 + "s \n")
 
     // Free up memory
     b.unpersist()
-    c.unpersist()
 
     // Close open stat file
     statFile.close()
