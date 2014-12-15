@@ -27,39 +27,48 @@ object TestDFSIO {
     val nFiles = args(1).toInt
     val fSize  = args(2).toInt
 
+    if (mode == "write") {
+
     //////////////////////////////////////////////////////////////////////
     // Write mode //
     //////////////////////////////////////////////////////////////////////
-    // Generate a RDD full of numbers
-    val a = sc.parallelize(1 to (fSize*nFiles), nFiles).map(x => x.toLong) // this is 115MB
-    // fSize = 1e7 ~ 115 MB for one writer
-    // nFiles = actually takes fSize and equally divides it for nFiles
-    // This is why we have fSize*nFiles as the file size
+    	// Generate a RDD full of numbers
+    	val a = sc.parallelize(1 to (fSize*nFiles), nFiles).map(x => x.toLong) // this is 115MB
+    	// fSize = 1e7 ~ 115 MB for one writer
+    	// nFiles = actually takes fSize and equally divides it for nFiles
+    	// This is why we have fSize*nFiles as the file size
 
-    // Write output file
-    val (junk, timeW) = profile {a.saveAsObjectFile(ioFile)}
-    statFile.write("\n\nTime for write : " + timeW/1000 + "s \n")
+    	// Write output file
+    	val (junk, timeW) = profile {a.saveAsObjectFile(ioFile)}
+    	statFile.write("\n\nTime for write : " + timeW/1000 + "s \n")
 
-    // Free up memory
-    a.unpersist()
+    	// Free up memory
+    	a.unpersist()
+
+	   	// Close open stat file
+    	statFile.close()
+
+	}
+
+	if (mode == "read") {
 
     //////////////////////////////////////////////////////////////////////
     // Read mode //
     //////////////////////////////////////////////////////////////////////
 
-    // Load file(s)
-    val b = sc.objectFile[Long](ioFile)
-    val (c, timeR) = profile {b.map(x => x+1).max}
+    	// Load file(s)
+    	val b = sc.objectFile[Long](ioFile)
+    	val (c, timeR) = profile {b.map(x => x+1).max}
 
-    // Write stats
-    statFile.write("\n\nTime for read : " + timeR/1000 + "s \n")
+    	// Write stats
+    	statFile.write("\n\nTime for read : " + timeR/1000 + "s \n")
 
-    // Free up memory
-    b.unpersist()
+    	// Free up memory
+    	b.unpersist()
 
-    // Close open stat file
-    statFile.close()
-
+    	// Close open stat file
+    	statFile.close()
+	}
   }
 }
 
