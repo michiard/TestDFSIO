@@ -31,7 +31,7 @@ object TestDFSIO {
     // Write mode //
     //////////////////////////////////////////////////////////////////////
     // Generate a RDD full of numbers
-    val a = sc.parallelize(1 to fSize*nFiles,nFiles).map(x => x.toLong) // this is 115MB
+    val a = sc.parallelize(1 to (fSize*nFiles), nFiles).map(x => x.toLong) // this is 115MB
     // fSize = 1e7 ~ 115 MB for one writer
     // nFiles = actually takes fSize and equally divides it for nFiles
     // This is why we have fSize*nFiles as the file size
