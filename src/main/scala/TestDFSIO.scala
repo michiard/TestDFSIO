@@ -22,54 +22,44 @@ object TestDFSIO {
 
     // Get number of files and individual size
     val nFiles = args(1).toInt
-    val fSize  = args(2).toInt
+    val fSize  = args(2).toInt // must be multiple of 2 bytes
 
     // This is the output file for statistics
     val statFile = new BufferedWriter(new FileWriter("TestDFSIO_"+ mode +".stat"))
 
-
+    //////////////////////////////////////////////////////////////////////
+    // Write mode
+    //////////////////////////////////////////////////////////////////////
     if (mode == "write") {
-
-    //////////////////////////////////////////////////////////////////////
-    // Write mode //
-    //////////////////////////////////////////////////////////////////////
-    	// Generate a RDD full of numbers
-    	val a = sc.parallelize(1 to (fSize*nFiles), nFiles).map(x => x.toLong) // this is 115MB
-    	// fSize = 1e7 ~ 115 MB for one writer
-    	// nFiles = actually takes fSize and equally divides it for nFiles
-    	// This is why we have fSize*nFiles as the file size
-
+    	// Generate a RDD full strings of "1" character (2 bytes)
+    	// E.g.: 4 files of 200 bytes each => 4 * 200 / 2 = 400
+    	val tmp = Array.ofDim[String](nFiles * fSize / 2).map(x => "1")
+    	val a = sc.parallelize(tmp,nFiles)
+    	
     	// Write output file
-    	val (junk, timeW) = profile {a.saveAsObjectFile(ioFile)}
-    	statFile.write("\n\nTime for write : " + timeW/1000 + "s \n")
-
-    	// Free up memory
-    	a.unpersist()
-
-	   	// Close open stat file
-    	statFile.close()
-
+    	val (junk, timeW) = profile {a.saveAsTextFile(ioFile)}
+    	statFile.write("\nTotal volume       : " + (nFiles * fSize / 2) + "bytes")
+    	statFile.write("\nTotal write time   : " + (timeW/1000) + "s")
+    	statFile.write("\n")
 	}
 
+    //////////////////////////////////////////////////////////////////////
+    // Read mode
+    //////////////////////////////////////////////////////////////////////
 	if (mode == "read") {
-
-    //////////////////////////////////////////////////////////////////////
-    // Read mode //
-    //////////////////////////////////////////////////////////////////////
-
     	// Load file(s)
-    	val b = sc.objectFile[Long](ioFile)
-    	val (c, timeR) = profile {b.map(x => x+1).max}
+    	val b = sc.textFile(ioFile,nFiles)
+    	val (c, timeR) = profile {b.map(x => "0").max}
 
     	// Write stats
-    	statFile.write("\n\nTime for read : " + timeR/1000 + "s \n")
-
-    	// Free up memory
-    	b.unpersist()
-
-    	// Close open stat file
-    	statFile.close()
+    	statFile.write("\nTotal volume      : " + (nFiles * fSize / 2) + "bytes")
+    	statFile.write("\nTotal read time   : " + (timeR/1000) + "s")
+    	statFile.write("\n")
 	}
+
+   	// Close open stat file
+   	statFile.close()
+
   }
 }
 
