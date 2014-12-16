@@ -40,8 +40,9 @@ object TestDFSIO {
     	// Write output file
 		// This is going to be saved as a binary object file
     	val (junk, timeW) = profile {a.saveAsObjectFile(ioFile)}
-    	statFile.write("\nTotal volume       : " + (nFiles * fSize) + " bytes")
-        statFile.write("\nTotal write time   : " + (timeW/1000) + " s")
+    	statFile.write("Total volume       : " + (nFiles * fSize) + " bytes \n")
+        statFile.write("Total write time   : " + (timeW/1000) + " s \n")
+        statFile.write("Cluster write I/O  : " + ((nFiles * fSize) / (1024*1024))/ (timeW/1000) + "MBps \n")
         statFile.write("\n")
 	}
 
@@ -54,8 +55,9 @@ object TestDFSIO {
     	val (c, timeR) = profile {b.map(x => x+1).max}
 
         // Write stats
-        statFile.write("\nTotal volume      : " + (nFiles * fSize) + " bytes")
-        statFile.write("\nTotal read time   : " + (timeR/1000) + " s")
+        statFile.write("Total volume      : " + (nFiles * fSize) + " bytes \n")
+        statFile.write("Total read time   : " + (timeR/1000) + " s \n")
+        statFile.write("Cluster write I/O  : " + ((nFiles * fSize) / (1024*1024))/ (timeR/1000) + "MBps \n")
         statFile.write("\n")
 	}
 
