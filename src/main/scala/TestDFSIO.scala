@@ -27,12 +27,10 @@ object TestDFSIO {
     // This is the output file for statistics
     val statFile = new BufferedWriter(new FileWriter("TestDFSIO_"+ mode +".stat"))
 
-
+    //////////////////////////////////////////////////////////////////////
+    // Write mode
+    //////////////////////////////////////////////////////////////////////
     if (mode == "write") {
-
-    //////////////////////////////////////////////////////////////////////
-    // Write mode //
-    //////////////////////////////////////////////////////////////////////
     	// Generate a RDD full of numbers
     	val a = sc.parallelize(1 to (fSize*nFiles), nFiles).map(x => x.toLong) // this is 115MB
     	// fSize = 1e7 ~ 115 MB for one writer
@@ -40,37 +38,29 @@ object TestDFSIO {
     	// This is why we have fSize*nFiles as the file size
 
     	// Write output file
-	// This is going to be saved as a binary object file
+		// This is going to be saved as a binary object file
     	val (junk, timeW) = profile {a.saveAsObjectFile(ioFile)}
-    	statFile.write("\n\nTime for write : " + timeW/1000 + "s \n")
-
-    	// Free up memory
-    	a.unpersist()
-
-	   	// Close open stat file
-    	statFile.close()
-
+    	statFile.write("\nTotal volume       : " + (nFiles * fSize) + " bytes")
+        statFile.write("\nTotal write time   : " + (timeW/1000) + " s")
+        statFile.write("\n")
 	}
 
+    //////////////////////////////////////////////////////////////////////
+    // Read mode
+    //////////////////////////////////////////////////////////////////////
 	if (mode == "read") {
-
-    //////////////////////////////////////////////////////////////////////
-    // Read mode //
-    //////////////////////////////////////////////////////////////////////
-
     	// Load file(s)
     	val b = sc.objectFile[Long](ioFile)
     	val (c, timeR) = profile {b.map(x => x+1).max}
 
-    	// Write stats
-    	statFile.write("\n\nTime for read : " + timeR/1000 + "s \n")
-
-    	// Free up memory
-    	b.unpersist()
-
-    	// Close open stat file
-    	statFile.close()
+        // Write stats
+        statFile.write("\nTotal volume      : " + (nFiles * fSize) + " bytes")
+        statFile.write("\nTotal read time   : " + (timeR/1000) + " s")
+        statFile.write("\n")
 	}
+
+   	// Close open stat file
+   	statFile.close()
   }
 }
 
