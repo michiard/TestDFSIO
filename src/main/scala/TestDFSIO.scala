@@ -37,6 +37,7 @@ object TestDFSIO {
     	val a = sc.parallelize(tmp,nFiles)
     	
     	// Write output file
+    	// This is a text file
     	val (junk, timeW) = profile {a.saveAsTextFile(ioFile)}
     	statFile.write("\nTotal volume       : " + (nFiles * fSize / 2) + "bytes")
     	statFile.write("\nTotal write time   : " + (timeW/1000) + "s")
