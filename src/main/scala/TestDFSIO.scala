@@ -40,6 +40,7 @@ object TestDFSIO {
     	// This is why we have fSize*nFiles as the file size
 
     	// Write output file
+	// This is going to be saved as a binary object file
     	val (junk, timeW) = profile {a.saveAsObjectFile(ioFile)}
     	statFile.write("\n\nTime for write : " + timeW/1000 + "s \n")
 
