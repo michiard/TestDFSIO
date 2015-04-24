@@ -16,6 +16,7 @@ object TestDFSIO {
 
     // Read or write mode
     val mode = args(0)
+    // Filename to be used to write/read data to/from the storage layer
     val ioFile = args(3)
 
     // Get number of files and individual size
