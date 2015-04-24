@@ -5,6 +5,8 @@ package fr.eurecom.dsg.spark
 
 import java.io.{BufferedWriter, FileWriter}
 import java.lang.System.{currentTimeMillis => _time}
+
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.{SparkConf, SparkContext}
 
 object TestDFSIO {
@@ -18,12 +20,17 @@ object TestDFSIO {
 
     // Read or write mode
     val mode = args(0)
+
     // Filename to be used to write/read data to/from the storage layer
     val ioFile = args(3)
 
     // Get number of files and individual size
     val nFiles = args(1).toInt
-    val fSize  = args(2).toInt // must be multiple of 2 bytes
+    val fSize  = args(2).toInt
+
+    // Create broadcast variables that will be used later on
+    val nFilesBV: Broadcast[Long] = sc.broadcast(nFiles)
+    val fSizeBV: Broadcast[Long] = sc.broadcast(fSize)
 
     // This is the output file for statistics
     val statFile = new BufferedWriter(new FileWriter("TestDFSIO_"+ mode +".stat"))
@@ -33,9 +40,10 @@ object TestDFSIO {
     //////////////////////////////////////////////////////////////////////
     if (mode == "write") {
     	// Generate a RDD full strings of "1" character (2 bytes)
-    	// E.g.: 4 files of 200 bytes each => 4 * 200 / 2 = 400
     	val tmp = Array.ofDim[String](nFiles * fSize / 2).map(x => "1")
     	val a = sc.parallelize(tmp,nFiles)
+
+//      val test = Seq.fill(1)(r.nextPrintableChar)
 
     	// Write output file
     	// This is a text file
