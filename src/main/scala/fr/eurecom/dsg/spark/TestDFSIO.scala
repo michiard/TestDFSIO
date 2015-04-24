@@ -29,8 +29,8 @@ object TestDFSIO {
     val fSize  = args(2).toInt
 
     // Create broadcast variables that will be used later on
-    val nFilesBV: Broadcast[Long] = sc.broadcast(nFiles)
-    val fSizeBV: Broadcast[Long] = sc.broadcast(fSize)
+    val nFilesBV: Broadcast[Int] = sc.broadcast(nFiles)
+    val fSizeBV: Broadcast[Int] = sc.broadcast(fSize)
 
     // This is the output file for statistics
     val statFile = new BufferedWriter(new FileWriter("TestDFSIO_"+ mode +".stat"))
@@ -39,11 +39,15 @@ object TestDFSIO {
     // Write mode
     //////////////////////////////////////////////////////////////////////
     if (mode == "write") {
-    	// Generate a RDD full strings of "1" character (2 bytes)
-    	val tmp = Array.ofDim[String](nFiles * fSize / 2).map(x => "1")
-    	val a = sc.parallelize(tmp,nFiles)
+      // Create a Range and parallelize it, on nFiles partitions
+      // The idea is to have a small RDD partitioned on a given number of workers
+      // then each worker will generate data to write
+    	val a = sc.parallelize(1 until nFiles+1, nFiles)
 
-//      val test = Seq.fill(1)(r.nextPrintableChar)
+      val b = a.map( i => {
+        val x = 1 until fSizeBV.value
+        x
+      })
 
     	// Write output file
     	// This is a text file
