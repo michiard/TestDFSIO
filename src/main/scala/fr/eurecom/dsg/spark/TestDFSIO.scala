@@ -1,8 +1,10 @@
+/**
+ * Created by Pietro Michiardi
+ */
 package fr.eurecom.dsg.spark
 
-import java.io._
+import java.io.{BufferedWriter, FileWriter}
 import java.lang.System.{currentTimeMillis => _time}
-
 import org.apache.spark.{SparkConf, SparkContext}
 
 object TestDFSIO {
@@ -34,7 +36,7 @@ object TestDFSIO {
     	// E.g.: 4 files of 200 bytes each => 4 * 200 / 2 = 400
     	val tmp = Array.ofDim[String](nFiles * fSize / 2).map(x => "1")
     	val a = sc.parallelize(tmp,nFiles)
-    	
+
     	// Write output file
     	// This is a text file
     	val (junk, timeW) = profile {a.saveAsTextFile(ioFile)}
@@ -62,4 +64,3 @@ object TestDFSIO {
 
   }
 }
-
