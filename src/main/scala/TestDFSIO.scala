@@ -1,11 +1,9 @@
-package fr.eurecom.dsg
-
-import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
-import org.apache.spark.SparkConf
+package fr.eurecom.dsg.spark
 
 import java.io._
-import System.{currentTimeMillis => _time}
+import java.lang.System.{currentTimeMillis => _time}
+
+import org.apache.spark.{SparkConf, SparkContext}
 
 object TestDFSIO {
 
