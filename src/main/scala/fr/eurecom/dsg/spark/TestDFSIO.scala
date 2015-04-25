@@ -25,8 +25,8 @@ object TestDFSIO {
     val ioFile = args(3)
 
     // Get number of files and individual size
-    val nFiles = args(1).toInt
-    val fSize  = args(2).toInt
+    val nFiles = args(1).toInt // corresponds to partitions
+    val fSize  = args(2).toInt // in Bytes
 
     // Create broadcast variables that will be used later on
     val fSizeBV: Broadcast[Int] = sc.broadcast(fSize)
@@ -44,15 +44,20 @@ object TestDFSIO {
     	val a = sc.parallelize(1 until nFiles+1, nFiles)
 
       val b = a.map( i => {
-        val x = Array.ofDim[Char](fSizeBV.value / 2).map(x => "0").mkString(" ")
+        // generate an array of bytes, with dimension fSize, fill it up with "0" chars
+        // and make it a string for it to be saved as text
+        val x = Array.ofDim[Byte](fSizeBV.value).map(x => "0").mkString(" ")
         x
       })
 
     	// Write output file
-    	// This is a text file
+    	// Since actions are lazy, we measure the time to write the file
+      // including that of creating the a, b RDDs and generating the data.
+      // This means the measure is inaccurate, and the throughput will be smaller
     	val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
-    	statFile.write("\nTotal volume       : " + (nFiles * fSize) + "bytes")
-    	statFile.write("\nTotal write time   : " + (timeW/1000) + "s")
+    	statFile.write("\nTotal volume         : " + (nFiles * fSize) + "bytes")
+    	statFile.write("\nTotal write time     : " + (timeW/1000) + "s")
+      statFile.write("\nAggregate Throughput : " + (nFiles * fSize)/(timeW/1000) + "bytes per second")
     	statFile.write("\n")
 	}
 
@@ -67,6 +72,7 @@ object TestDFSIO {
     	// Write stats
     	statFile.write("\nTotal volume      : " + (nFiles * fSize) + "bytes")
     	statFile.write("\nTotal read time   : " + (timeR/1000) + "s")
+      statFile.write("\nAggregate Throughput : " + (nFiles * fSize)/(timeR/1000) + "bytes per second")
     	statFile.write("\n")
 	}
 
