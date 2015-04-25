@@ -15,6 +15,7 @@ object TestDFSIO {
   def profile[R](code: => R, t: Long = _time) = (code, _time - t)
 
   def main(args: Array[String]) {
+    // TODO: Need to display usage information, and explain arguments
     // Create a new Context
     val sc = new SparkContext(new SparkConf().setAppName("Spark DFSIO"))
 
