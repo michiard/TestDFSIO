@@ -44,7 +44,7 @@ object TestDFSIO {
     	val a = sc.parallelize(1 until nFiles+1, nFiles)
 
       val b = a.map( i => {
-        // generate an array of bytes, with dimension fSize, fill it up with "0" chars
+        // generate an array of bytes (8 bit), with dimension fSize, fill it up with "0" chars
         // and make it a string for it to be saved as text
         val x = Array.ofDim[Byte](fSizeBV.value).map(x => "0").mkString(" ")
         x
