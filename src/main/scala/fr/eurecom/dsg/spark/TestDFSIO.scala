@@ -58,8 +58,8 @@ object TestDFSIO {
       // This means the measure is inaccurate, and the throughput will be smaller
     	val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
     	statFile.write("\nTotal volume         : " + (nFiles.toLong * fSize) + " Bytes")
-    	statFile.write("\nTotal write time     : " + (timeW/1000) + " s")
-      statFile.write("\nAggregate Throughput : " + (nFiles * fSize.toLong)/(timeW/1000) + " Bytes per second")
+    	statFile.write("\nTotal write time     : " + (timeW/1000.toFloat) + " s")
+      statFile.write("\nAggregate Throughput : " + (nFiles * fSize.toLong)/(timeW/1000.toFloat) + " Bytes per second")
     	statFile.write("\n")
 	}
 
@@ -73,8 +73,8 @@ object TestDFSIO {
 
     	// Write stats
     	statFile.write("\nTotal volume      : " + (nFiles * fSize.toLong) + " Bytes")
-    	statFile.write("\nTotal read time   : " + (timeR/1000) + " s")
-      statFile.write("\nAggregate Throughput : " + (nFiles * fSize.toLong)/(timeR/1000) + " Bytes per second")
+    	statFile.write("\nTotal read time   : " + (timeR/1000.toFloat) + " s")
+      statFile.write("\nAggregate Throughput : " + (nFiles * fSize.toLong)/(timeR/1000.toFloat) + " Bytes per second")
     	statFile.write("\n")
 	}
 
