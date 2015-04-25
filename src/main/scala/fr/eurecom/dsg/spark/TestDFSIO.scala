@@ -44,7 +44,7 @@ object TestDFSIO {
     	val a = sc.parallelize(1 until nFiles+1, nFiles)
 
       val b = a.map( i => {
-        val x = Array.ofDim[Char](fSizeBV.value)
+        val x = Array.ofDim[Char](fSizeBV.value).map(x => "0")
         x
       })
 
