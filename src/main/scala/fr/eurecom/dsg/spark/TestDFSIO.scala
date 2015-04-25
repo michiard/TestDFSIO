@@ -50,7 +50,7 @@ object TestDFSIO {
 
     	// Write output file
     	// This is a text file
-    	val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
+    	val (junk, timeW) = profile {a.saveAsTextFile(ioFile)}
     	statFile.write("\nTotal volume       : " + (nFiles * fSize) + "bytes")
     	statFile.write("\nTotal write time   : " + (timeW/1000) + "s")
     	statFile.write("\n")
