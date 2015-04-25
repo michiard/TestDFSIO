@@ -47,6 +47,7 @@ object TestDFSIO {
       val b = a.map( i => {
         // generate an array of Chars (16 bit), with dimension fSize / 2 (to make it bytes)
         // fill it up with "0" chars, and make it a string for it to be saved as text
+        // TODO: this approach can still cause memory problems in the executor if the array is too big.
         val x = Array.ofDim[Char](fSizeBV.value / 2).map(x => "0").mkString(" ")
         x
       })
