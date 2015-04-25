@@ -17,7 +17,7 @@ object TestDFSIO {
   def main(args: Array[String]) {
     // TODO: Need to display usage information, and explain arguments
     // Create a new Context
-    val sc = new SparkContext(new SparkConf().setAppName("Spark DFSIO"))
+    val sc = new SparkContext(new SparkConf().setAppName("Spark DFSIO").set("spark.hadoop.dfs.replication", "1"))
 
     // Read or write mode
     val mode = args(0)
