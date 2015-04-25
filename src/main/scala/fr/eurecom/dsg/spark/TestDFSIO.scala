@@ -57,9 +57,9 @@ object TestDFSIO {
       // including that of creating the a, b RDDs and generating the data.
       // This means the measure is inaccurate, and the throughput will be smaller
     	val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
-    	statFile.write("\nTotal volume         : " + (nFiles * fSize) + " Bytes")
+    	statFile.write("\nTotal volume         : " + (nFiles.toLong * fSize) + " Bytes")
     	statFile.write("\nTotal write time     : " + (timeW/1000) + " s")
-      statFile.write("\nAggregate Throughput : " + (nFiles * fSize)/(timeW/1000) + " Bytes per second")
+      statFile.write("\nAggregate Throughput : " + (nFiles * fSize.toLong)/(timeW/1000) + " Bytes per second")
     	statFile.write("\n")
 	}
 
@@ -72,9 +72,9 @@ object TestDFSIO {
     	val (c, timeR) = profile {b.map(x => "0").take(1)}
 
     	// Write stats
-    	statFile.write("\nTotal volume      : " + (nFiles * fSize) + " Bytes")
+    	statFile.write("\nTotal volume      : " + (nFiles * fSize.toLong) + " Bytes")
     	statFile.write("\nTotal read time   : " + (timeR/1000) + " s")
-      statFile.write("\nAggregate Throughput : " + (nFiles * fSize)/(timeR/1000) + " Bytes per second")
+      statFile.write("\nAggregate Throughput : " + (nFiles * fSize.toLong)/(timeR/1000) + " Bytes per second")
     	statFile.write("\n")
 	}
 
