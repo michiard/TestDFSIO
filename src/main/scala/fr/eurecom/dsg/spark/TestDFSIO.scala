@@ -29,7 +29,6 @@ object TestDFSIO {
     val fSize  = args(2).toInt
 
     // Create broadcast variables that will be used later on
-    val nFilesBV: Broadcast[Int] = sc.broadcast(nFiles)
     val fSizeBV: Broadcast[Int] = sc.broadcast(fSize)
 
     // This is the output file for statistics
@@ -51,8 +50,8 @@ object TestDFSIO {
 
     	// Write output file
     	// This is a text file
-    	val (junk, timeW) = profile {a.saveAsTextFile(ioFile)}
-    	statFile.write("\nTotal volume       : " + (nFiles * fSize / 2) + "bytes")
+    	val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
+    	statFile.write("\nTotal volume       : " + (nFiles * fSize) + "bytes")
     	statFile.write("\nTotal write time   : " + (timeW/1000) + "s")
     	statFile.write("\n")
 	}
@@ -66,7 +65,7 @@ object TestDFSIO {
     	val (c, timeR) = profile {b.map(x => "0").max}
 
     	// Write stats
-    	statFile.write("\nTotal volume      : " + (nFiles * fSize / 2) + "bytes")
+    	statFile.write("\nTotal volume      : " + (nFiles * fSize) + "bytes")
     	statFile.write("\nTotal read time   : " + (timeR/1000) + "s")
     	statFile.write("\n")
 	}
