@@ -44,13 +44,13 @@ object TestDFSIO {
     	val a = sc.parallelize(1 until nFiles+1, nFiles)
 
       val b = a.map( i => {
-        val x = 1 until fSizeBV.value
+        val x = Array.ofDim[Char](fSizeBV.value)
         x
       })
 
     	// Write output file
     	// This is a text file
-    	val (junk, timeW) = profile {a.saveAsTextFile(ioFile)}
+    	val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
     	statFile.write("\nTotal volume       : " + (nFiles * fSize) + "bytes")
     	statFile.write("\nTotal write time   : " + (timeW/1000) + "s")
     	statFile.write("\n")
