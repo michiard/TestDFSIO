@@ -45,26 +45,25 @@ object TestDFSIO {
     	val a = sc.parallelize(1 until nFiles+1, nFiles)
 
       val b = a.map( i => {
-        // generate an array of Chars (16 bit), with dimension fSize / 2 (to make it bytes)
+        // generate an array of Byte (8 bit), with dimension fSize
         // fill it up with "0" chars, and make it a string for it to be saved as text
         // TODO: this approach can still cause memory problems in the executor if the array is too big.
-        val x = Array.ofDim[Char](fSizeBV.value / 2).map(x => "0").mkString(" ")
+        val x = Array.ofDim[Byte](fSizeBV.value).map(x => "0").mkString(" ")
         x
       })
 
       // Force computation on the RDD
       sc.runJob(b, (iter: Iterator[_]) => {})
 
-    	// Write output file
-    	// Since actions are lazy, we measure the time to write the file
-      // including that of creating the a, b RDDs and generating the data.
-      // This means the measure is inaccurate, and the throughput will be smaller
-    	val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
-    	statFile.write("\nTotal volume         : " + (nFiles.toLong * fSize) + " Bytes")
-    	statFile.write("\nTotal write time     : " + (timeW/1000.toFloat) + " s")
+      // Write output file
+      val (junk, timeW) = profile {b.saveAsTextFile(ioFile)}
+
+      // Write statistics
+      statFile.write("\nTotal volume         : " + (nFiles.toLong * fSize) + " Bytes")
+      statFile.write("\nTotal write time     : " + (timeW/1000.toFloat) + " s")
       statFile.write("\nAggregate Throughput : " + (nFiles * fSize.toLong)/(timeW/1000.toFloat) + " Bytes per second")
-    	statFile.write("\n")
-	}
+      statFile.write("\n")
+    }
 
     //////////////////////////////////////////////////////////////////////
     // Read mode
