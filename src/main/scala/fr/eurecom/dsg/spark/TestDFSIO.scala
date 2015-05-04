@@ -52,6 +52,9 @@ object TestDFSIO {
         x
       })
 
+      // Force computation on the RDD
+      sc.runJob(b, (iter: Iterator[_]) => {})
+
     	// Write output file
     	// Since actions are lazy, we measure the time to write the file
       // including that of creating the a, b RDDs and generating the data.
