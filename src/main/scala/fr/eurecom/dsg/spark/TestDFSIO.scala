@@ -83,5 +83,6 @@ object TestDFSIO {
    	// Close open stat file
    	statFile.close()
 
+    sc.stop()
   }
 }
