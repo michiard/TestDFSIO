@@ -72,6 +72,8 @@ object TestDFSIO {
     	// Load file(s)
     	val b = sc.textFile(ioFile,nFiles)
     	val (c, timeR) = profile {b.map(x => "0").take(1)}
+    	// BE CAREFUL! This is wrong: Spark is smart enough to read only one partition from which it gets the first element, so the read time is bogus
+    	// FIX ME :(
 
     	// Write stats
     	statFile.write("\nTotal volume      : " + (nFiles * fSize.toLong) + " Bytes")
